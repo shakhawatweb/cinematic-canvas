@@ -1,40 +1,52 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
-  { label: "Work", href: "#portfolio" },
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "/portfolio" },
+  { label: "Projects", href: "/projects" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <>
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 1, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 py-6"
+        transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 py-6 bg-background/80 backdrop-blur-md"
       >
-        <a href="#" className="font-heading text-lg tracking-widest text-foreground">
+        <Link to="/" className="font-heading text-lg tracking-widest text-foreground" data-cursor-hover>
           AURELIA
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-12">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="text-sm tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-500 relative group"
-            >
-              {item.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary group-hover:w-full transition-all duration-500" />
-            </a>
-          ))}
+          {navItems.map((item) => {
+            const isActive = location.pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.label}
+                to={item.href}
+                data-cursor-hover
+                className={`text-sm tracking-[0.2em] uppercase transition-colors duration-500 relative group ${
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {item.label}
+                <span
+                  className={`absolute -bottom-1 left-0 h-px bg-primary transition-all duration-500 ${
+                    isActive ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                />
+              </Link>
+            );
+          })}
         </div>
 
         {/* Hamburger */}
@@ -70,17 +82,20 @@ const Navigation = () => {
           >
             <div className="flex flex-col items-center gap-8">
               {navItems.map((item, i) => (
-                <motion.a
+                <motion.div
                   key={item.label}
-                  href={item.href}
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
-                  onClick={() => setIsOpen(false)}
-                  className="font-heading text-4xl text-foreground hover:text-primary transition-colors"
                 >
-                  {item.label}
-                </motion.a>
+                  <Link
+                    to={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="font-heading text-4xl text-foreground hover:text-primary transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </motion.div>
