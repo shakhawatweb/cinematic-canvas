@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
 const navItems = [
-  { label: "Work", href: "/portfolio" },
+  { label: "Shop", href: "/shop" },
+  { label: "Portfolio", href: "/portfolio" },
   { label: "Projects", href: "/projects" },
+  { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -12,6 +16,7 @@ const navItems = [
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { itemCount, setCartOpen } = useCart();
 
   return (
     <>
@@ -26,7 +31,7 @@ const Navigation = () => {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-12">
+        <div className="hidden md:flex items-center gap-10">
           {navItems.map((item) => {
             const isActive = location.pathname.startsWith(item.href);
             return (
@@ -47,27 +52,50 @@ const Navigation = () => {
               </Link>
             );
           })}
+
+          {/* Cart icon */}
+          <button
+            onClick={() => setCartOpen(true)}
+            data-cursor-hover
+            className="relative text-muted-foreground hover:text-foreground transition-colors duration-500"
+          >
+            <ShoppingCart size={18} />
+            {itemCount > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-2 -right-2 w-4 h-4 bg-primary text-primary-foreground text-[9px] flex items-center justify-center font-medium"
+              >
+                {itemCount}
+              </motion.span>
+            )}
+          </button>
         </div>
 
-        {/* Hamburger */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden flex flex-col gap-1.5 z-50"
-          data-cursor-hover
-        >
-          <motion.span
-            animate={isOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-            className="w-6 h-px bg-foreground block"
-          />
-          <motion.span
-            animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-            className="w-6 h-px bg-foreground block"
-          />
-          <motion.span
-            animate={isOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-            className="w-6 h-px bg-foreground block"
-          />
-        </button>
+        {/* Mobile: cart + hamburger */}
+        <div className="md:hidden flex items-center gap-4 z-50">
+          <button
+            onClick={() => setCartOpen(true)}
+            data-cursor-hover
+            className="relative text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ShoppingCart size={18} />
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 w-4 h-4 bg-primary text-primary-foreground text-[9px] flex items-center justify-center font-medium">
+                {itemCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="flex flex-col gap-1.5"
+            data-cursor-hover
+          >
+            <motion.span animate={isOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }} className="w-6 h-px bg-foreground block" />
+            <motion.span animate={isOpen ? { opacity: 0 } : { opacity: 1 }} className="w-6 h-px bg-foreground block" />
+            <motion.span animate={isOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }} className="w-6 h-px bg-foreground block" />
+          </button>
+        </div>
       </motion.nav>
 
       {/* Fullscreen mobile menu */}
