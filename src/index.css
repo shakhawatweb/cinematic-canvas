@@ -100,3 +100,20 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Image protection */
+.protected-image {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.protected-image img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Disable right-click on protected images (CSS layer — JS handles the rest) */
+.protected-image {
+  -webkit-touch-callout: none;
+}
